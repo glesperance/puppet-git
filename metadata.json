@@ -2,6 +2,5 @@
     "license": "GPL2",
     "author": "author",
     "version": "1.0",
-    "puppetversion": "0.25",
-    "source": "http://foo/"
+    "source": "https://github.com/vurbia/puppet-git/"
 }
