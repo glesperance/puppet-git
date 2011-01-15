@@ -1,4 +1,6 @@
 define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=false) {
+	include git::client
+	
 	if $real_name {
 		$_name = $real_name
 	}
@@ -6,24 +8,25 @@ define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=fa
 		$_name = $name
 	}
 
+	# if defined(File["git-${localtree}"]) {
+	# 		realize(
+	# 			File["git-${localtree}"]
+	# 		)
+	# 	} else {
+	# 		@file { "git-${localtree}":
+	# 			path   => $localtree,
+	# 			ensure => directory
+	# 		}
+	# 		realize(
+	# 			File["git-${localtree}"]
+	# 		)
+	# 	}
+
 	exec { "git_clone_exec_$localtree/$_name":
 		command => "/usr/bin/git clone `echo $source | sed -r -e 's,(git://|ssh://)(.*)//(.*),\\1\\2/\\3,g'` $_name",
 		cwd     => $localtree,
 		creates => "$localtree/$_name/.git/",
-		require => File["$localtree"]
-	}
-
-	if defined(File["$localtree"]) {
-		realize(
-			File["$localtree"]
-		)
-	} else {
-		@file { "$localtree":
-			ensure => directory
-		}
-		realize(
-			File["$localtree"]
-		)
+		require => Class["git::client"]
 	}
 
 	case $branch {

@@ -40,7 +40,7 @@ define git::repository ($public=false, $shared=false, $localtree="/srv/git/", $o
 		realize(User["$owner"])
 	} else {
 		@user { "$owner":
-			ensure  => present
+			ensure  => present,
 			comment => "User for git repository $name",
 			groups  => "$group",
 			shell   => "/usr/bin/git-shell"
