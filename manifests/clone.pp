@@ -46,12 +46,6 @@ define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=fa
 				},
 				require => Exec["git_clone_exec_${localtree}/${_name}"]
             }
-
-			if $submodules {
-				Exec["git_update_subomodules_${localtree}/${_name}"] {
-					require +> Exec["git_clone_checkout_${branch}_${localtree}/${_name}"]
-				}
-			}
         }
     }
 
@@ -66,7 +60,10 @@ define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=fa
 					""      => undef,
 					default => $user
 				},
-				require => Exec["git_clone_exec_${localtree}/${_name}"]
+				require => $branch ? {
+					false   => Exec["git_clone_exec_${localtree}/${_name}"],
+					default => Exec["git_clone_checkout_${branch}_${localtree}/${_name}"]
+				}
             }
         }
     }
