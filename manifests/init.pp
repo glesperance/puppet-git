@@ -1,7 +1,3 @@
-import "classes/*.pp"
-import "definitions/*.pp"
-import "definitions/repository*.pp"
-
 # The git module
 #
 # License: GPLv3+
