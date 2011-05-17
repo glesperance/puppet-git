@@ -2,18 +2,16 @@
 #
 #
 class git::server::install {
-	Package {
-		require => Class["xinetd"]
-	}
-	
-	package { "diffstat":
-		ensure => installed
+	package { 'diffstat':
+		ensure  => installed,
+		require => Class['xinetd'],
 	}
 	
 	# Redhat/CentOS need the git-daemon package
 	if ($operatingsystem =~ /(?i)(Redhat|CentOS)/)
-		package { "git-daemon":
-			ensure => latest
+		package { 'git-daemon':
+			ensure  => latest
+			require => Class['xinetd'],
 		}
 	}
 }

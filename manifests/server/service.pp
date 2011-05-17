@@ -2,12 +2,12 @@
 #
 #
 class git::server::service {
-	service { "elasticsearch":
+	service { 'git':
 		ensure     => running,
 		enable     => true,
 		hasrestart => true,
 		hasstatus  => true,
-		notify     => Class["xinetd::service"],
-		require    => Class["git::service::config"]
+		notify     => Class['xinetd::service'],
+		require    => Class['git::server::config'],
 	}
 }

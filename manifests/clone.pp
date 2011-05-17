@@ -1,4 +1,10 @@
-define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=false, $submodules=false, $user="") {
+define git::clone ($source,
+									 $localtree  = '/srv/git/',
+									 $real_name  = false,
+									 $branch     = false,
+									 $submodules = false,
+									 $user       = '') {
+
 	include git::client
 	
 	if $real_name {
@@ -27,10 +33,10 @@ define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=fa
 		cwd     => $localtree,
 		creates => "${localtree}/${_name}/.git/",
 		user    => $user ? {
-			""      => undef,
+			''      => undef,
 			default => $user
 		},
-		require => Class["git::client"]
+		require => Class['git::client'],
 	}
 
 	case $branch {
@@ -41,30 +47,30 @@ define git::clone ($source, $localtree="/srv/git/", $real_name=false, $branch=fa
 				cwd     => "${localtree}/${_name}",
 				creates => "${localtree}/${_name}/.git/refs/heads/${branch}",
 				user    => $user ? {
-					""      => undef,
-					default => $user
+					''      => undef,
+					default => $user,
 				},
-				require => Exec["git_clone_exec_${localtree}/${_name}"]
-            }
-        }
-    }
+				require => Exec["git_clone_exec_${localtree}/${_name}"],
+			}
+		}
+	}
 
 	case $submodules {
 		false: {}
 		default: {
 			exec { "git_update_subomodules_${localtree}/${_name}":
-				command => "git submodule update --init --recursive",
+				command => 'git submodule update --init --recursive',
 				cwd     => "${localtree}/${_name}",
-				onlyif  => "git submodule status | grep ^-",
+				onlyif  => 'git submodule status | grep ^-',
 				user    => $user ? {
-					""      => undef,
-					default => $user
+					''      => undef,
+					default => $user,
 				},
 				require => $branch ? {
 					false   => Exec["git_clone_exec_${localtree}/${_name}"],
-					default => Exec["git_clone_checkout_${branch}_${localtree}/${_name}"]
-				}
-            }
-        }
-    }
+					default => Exec["git_clone_checkout_${branch}_${localtree}/${_name}"],
+				},
+			}
+		}
+	}
 }
